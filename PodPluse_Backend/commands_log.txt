@@ -1,0 +1,19 @@
+python -m venv decors_venv
+
+pip install django
+
+django-admin startproject PodPluse_Backend
+
+pip install django-decouple
+
+python manage.py startapp account
+
+pip install djangorestframework
+pip install djangorestframework-simplejwt
+pip install django-cors-headers
+
+pip install validate_email
+
+python manage.py startapp core
+
+pip install pillow
