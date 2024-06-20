@@ -2,6 +2,7 @@ import LeftSideBar from '@/components/LeftSideBar';
 import Logo from './../../assets/icons/logo.svg';
 import RightSideBar from '@/components/RightSideBar';
 import MobileNav from '@/components/MobileNav';
+import { Toaster } from '@/components/ui/toaster';
 
 const Layout = (
   { children }
@@ -23,7 +24,7 @@ const Layout = (
               <MobileNav />
             </div>
             <div className="flex flex-col md:pb-14">
-              {/* <Toaster /> */}
+              <Toaster />
 
               {children}
             </div>

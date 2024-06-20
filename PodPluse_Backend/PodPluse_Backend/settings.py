@@ -30,6 +30,7 @@ INSTALLED_APPS = [
 
     'account',
     'core',
+    'core.podcast'
 ]
 
 MIDDLEWARE = [

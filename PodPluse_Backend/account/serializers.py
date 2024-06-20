@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError as DjangoValidationError
 from validate_email import validate_email
+from .helper import extract_first_last_name
 
 User = get_user_model()
 
@@ -14,11 +15,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'is_active', 'is_staff', 'is_superuser', 'is_completed', 'is_socialaccount', 'date_joined', 'last_login')
 
 class RegisterSerializer(serializers.ModelSerializer):
+    username = serializers.CharField()
     password = serializers.CharField(write_only=True, validators=[validate_password])
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'password')
+        fields = ('id', 'username', 'email', 'password')
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
@@ -30,9 +32,13 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Enter a valid email address.")
 
     def create(self, validated_data):
+        first_name, last_name = extract_first_last_name(validated_data['username'])
         user = User.objects.create_user(
+            first_name=first_name,
+            last_name=last_name,
             email=validated_data['email'],
-            password=validated_data['password']
+            password=validated_data['password'],
+            is_completed=True
         )
         return user
 

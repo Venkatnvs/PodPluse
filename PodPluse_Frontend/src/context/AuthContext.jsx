@@ -1,6 +1,6 @@
 import { createContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, register, logout, fetchUserProfile } from '../store/actions/authActions';
+import { login, register, logout, fetchUser } from '../store/actions/authActions';
 
 const AuthContext = createContext();
 
@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (authTokens.access) {
-      dispatch(fetchUserProfile());
+      dispatch(fetchUser());
     }
   }, [authTokens, dispatch]);
 

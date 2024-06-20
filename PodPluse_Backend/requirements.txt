@@ -5,3 +5,10 @@ djangorestframework-simplejwt
 django-cors-headers
 validate_email
 pillow
+openai
+pyttsx3
+pydub
+gTTS
+transformers
+torch
+coqui-tts

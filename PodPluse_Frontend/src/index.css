@@ -26,7 +26,7 @@ html {
     @apply sticky left-0 top-0 flex w-fit flex-col  justify-between  border-none  bg-black-1 pt-8 text-white-1 max-md:hidden lg:w-[270px] lg:pl-8;
   }
   .generate_thumbnail {
-    @apply mt-[30px] flex w-full max-w-[520px] flex-col justify-between gap-2 rounded-lg border border-black-6 bg-black-1 px-2.5 py-2 md:flex-row md:gap-0;
+    @apply mt-[30px] flex w-full max-w-[550px] flex-col justify-between gap-2 rounded-lg border border-black-6 bg-black-1 px-2.5 py-2 md:flex-row md:gap-0;
   }
   .image_div {
     @apply flex-center mt-5 h-[142px] w-full cursor-pointer flex-col gap-3 rounded-xl border-[3.2px] border-dashed border-black-6 bg-black-1;
@@ -107,41 +107,4 @@ html {
   background: rgba(18, 18, 18, 0.64);
   backdrop-filter: blur(37px);
   -webkit-backdrop-filter: blur(37px);
-}
-
-/* ======= clerk overrides ======== */
-.cl-socialButtonsIconButton {
-  border: 2px solid #222429;
-}
-.cl-button {
-  color: white;
-}
-.cl-socialButtonsProviderIcon__github {
-  filter: invert(1);
-}
-.cl-internal-b3fm6y {
-  background: #f97535;
-}
-.cl-formButtonPrimary {
-  background: #f97535;
-}
-.cl-footerActionLink {
-  color: #f97535;
-}
-.cl-headerSubtitle {
-  color: #c5d0e6;
-}
-.cl-logoImage {
-  width: 10rem;
-  height: 3rem;
-}
-.cl-internal-4a7e9l {
-  color: white;
-}
-
-.cl-userButtonPopoverActionButtonIcon {
-  color: white;
-}
-.cl-internal-wkkub3 {
-  color: #f97535;
 }

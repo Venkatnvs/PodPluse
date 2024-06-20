@@ -41,18 +41,23 @@ export const loginUser = (formData) => async (dispatch) => {
         Cookies.set(ACCESS_TOKEN, response.data.tokens.access);
         Cookies.set(REFRESH_TOKEN, response.data.tokens.refresh);
         dispatch(loginSuccess(response.data.tokens));
-        dispatch(setUser(response.data.email));
+        dispatch(fetchUser());
+        return response;
     } catch (error) {
-        dispatch(authFail(error.response.data));
+        dispatch(authFail(error?.response?.data || "Something went wrong! Please try again later."
+        ));
+        return error;
     }
 };
 
 export const registerUser = (formData) => async (dispatch) => {
     try {
-        await registerApi(formData);
+        const response = await registerApi(formData);
         dispatch(registerSuccess());
+        return response;
     } catch (error) {
         dispatch(authFail(error.response.data));
+        return error;
     }
 };
 

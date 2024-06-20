@@ -33,12 +33,13 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         user: action.payload,
+        error: null,
       };
     case AUTH_FAIL:
     case FETCH_USER_FAIL:
       return {
         ...state,
-        error: action.payload?.non_field_errors || action.payload?.detail || action.payload?.message || action.payload,
+        error: action.payload,
       };
     default:
       return state;

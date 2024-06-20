@@ -17,3 +17,13 @@ pip install validate_email
 python manage.py startapp core
 
 pip install pillow
+
+pip install openai
+
+pip install pyttsx3
+pip install pydub
+pip install gTTS
+
+pip install transformers torch
+
+pip install coqui-tts

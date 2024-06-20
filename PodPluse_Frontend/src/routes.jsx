@@ -1,6 +1,7 @@
 import HomeMain from './pages/Home/Main';
-import PodcastMain from './pages/Podcast/Main';
+import CreatePodCast from './pages/Podcast/CreatePodCast';
 import DiscoverMain from './pages/Discover/Main';
+import PodCastDetails from './pages/Podcast/PodCastDetails';
 
 const routes = [
   {
@@ -11,7 +12,12 @@ const routes = [
   {
     name: 'podcast',
     path: '/create-podcast',
-    element: PodcastMain,
+    element: CreatePodCast,
+  },
+  {
+    name: 'podcast-details',
+    path: '/podcast/:id',
+    element: PodCastDetails,
   },
   {
     name: 'discover',
