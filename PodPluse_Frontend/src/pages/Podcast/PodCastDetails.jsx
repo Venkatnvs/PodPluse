@@ -17,6 +17,11 @@ const PodCastDetails = () => {
 
     const isOwner = user?.id === podcast?.user
 
+    // set scroll to top
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [id])
+
     useEffect(() => {
         getPodcastApi(id).then((response) => {
             console.log(response.data[0])

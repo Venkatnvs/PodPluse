@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie';
 import { loginApi, registerApi, refreshTokenApi, fetchUserApi } from '../../apis/authentication';
 import { AUTH_FAIL, FETCH_USER_FAIL, LOGIN_SUCCESS, LOGOUT, REGISTER_SUCCESS, SET_USER } from '@/constants/actions/AuthConstants';
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants/CookiesConstants';
+import { ACCESS_TOKEN, REFRESH_TOKEN, SET_USER_DATA } from '@/constants/CookiesConstants';
 
 export const loginSuccess = (authTokens) => ({
     type: LOGIN_SUCCESS,
@@ -30,6 +30,7 @@ export const authFail = (error) => ({
 export const logout = () => {
     Cookies.remove(ACCESS_TOKEN);
     Cookies.remove(REFRESH_TOKEN);
+    Cookies.remove(SET_USER_DATA);
     return {
         type: LOGOUT,
     };
@@ -76,6 +77,7 @@ export const refreshToken = () => async (dispatch) => {
 export const fetchUser = () => async (dispatch) => {
     try {
         const response = await fetchUserApi();
+        Cookies.set(SET_USER_DATA, JSON.stringify(response.data));
         dispatch(setUser(response.data));
     } catch (error) {
         dispatch(setUserFail(error.response.data));

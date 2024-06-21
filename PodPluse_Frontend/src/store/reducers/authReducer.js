@@ -1,12 +1,13 @@
+import { ACCESS_TOKEN, REFRESH_TOKEN, SET_USER_DATA } from "@/constants/CookiesConstants";
 import { AUTH_FAIL, FETCH_USER_FAIL, LOGIN_SUCCESS, LOGOUT, REGISTER_SUCCESS, SET_USER } from "@/constants/actions/AuthConstants";
 import Cookies from "js-cookie";
 
 const initialState = {
   authTokens: {
-    access: Cookies.get("access_token"),
-    refresh: Cookies.get("refresh_token"),
+    access: Cookies.get(ACCESS_TOKEN),
+    refresh: Cookies.get(REFRESH_TOKEN),
   },
-  user: null,
+  user: Cookies.get(SET_USER_DATA) ? JSON.parse(Cookies.get(SET_USER_DATA)) : null,
   error: null,
 };
 

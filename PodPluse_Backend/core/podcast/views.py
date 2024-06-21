@@ -7,7 +7,10 @@ from rest_framework.permissions import IsAuthenticated
 from core.models import Podcast, Audio, Image
 from core.podcast.serializers import PodcastSerializer, AudioSerializer, ImageSerializer,FullPodcastSerializer
 from rest_framework.generics import ListAPIView, DestroyAPIView
-from django.db.models import Q
+from django.db.models import Q, Count, Sum
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 @transaction.atomic
 @api_view(['POST'])
@@ -91,3 +94,20 @@ class DeletePodcast(DestroyAPIView):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class GetTopPodCasters(ListAPIView):
+    # serializer_class = PodcastSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        top_podcasters = User.objects.annotate(
+            podcast_count=Count('podcast'),
+            total_likes=Sum('podcast__reaction__reaction')
+        ).filter(podcast_count__gt=0).order_by('-podcast_count', '-total_likes')
+        print(top_podcasters)
+        return top_podcasters
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        top_podcasters = queryset.values('id', 'first_name' , 'last_name', 'podcast_count', 'total_likes')[:10]
+        return Response(top_podcasters)

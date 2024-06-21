@@ -2,8 +2,14 @@ import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import Logo from '.././assets/icons/logo.svg';
 import { sidebarLinks } from './../pages/SideBarLinks';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button } from './ui/button';
+import { logout } from '@/store/actions/authActions';
 
 const LeftSideBar = () => {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user)
+
   return (
     <section className="left_sidebar h-[calc(100vh-5px)]">
       <nav className="flex flex-col gap-6">
@@ -28,6 +34,19 @@ const LeftSideBar = () => {
         }
 
       </nav>
+
+      {
+        user && (
+          <div className="flex-center w-full pb-14 max-lg:px-4 lg:pr-8">
+            <Button className="text-16 w-full bg-orange-1 font-extrabold" onClick={() => {
+              dispatch(logout())
+              window.location.reload()
+            }}>
+              Log Out
+            </Button>
+          </div>
+        )
+      }
     </section>
   )
 }

@@ -23,3 +23,6 @@ export const getSimilarPodcastsApi = (podcastUUID) =>
 
 export const deletePodcastApi = (podcastUUID) =>
     AXIOS_INSTANCE.delete(`/core/podcast/${podcastUUID}/delete/`);
+
+export const getTopPodCastersApi = () =>
+    AXIOS_INSTANCE.get('/core/podcast/top-podcasters/');
