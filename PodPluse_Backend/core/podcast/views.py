@@ -5,10 +5,18 @@ from django.db import transaction
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from core.models import Podcast, Audio, Image
-from core.podcast.serializers import PodcastSerializer, AudioSerializer, ImageSerializer,FullPodcastSerializer
+from core.podcast.serializers import (
+    PodcastSerializer,
+    AudioSerializer,
+    ImageSerializer,
+    FullPodcastSerializer,
+    TopPodcasterSerializer,
+    )
+from account.serializers import UserSerializer
 from rest_framework.generics import ListAPIView, DestroyAPIView
 from django.db.models import Q, Count, Sum
 from django.contrib.auth import get_user_model
+from rest_framework.exceptions import NotFound
 
 User = get_user_model()
 
@@ -96,7 +104,7 @@ class DeletePodcast(DestroyAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 class GetTopPodCasters(ListAPIView):
-    # serializer_class = PodcastSerializer
+    serializer_class = TopPodcasterSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -104,10 +112,44 @@ class GetTopPodCasters(ListAPIView):
             podcast_count=Count('podcast'),
             total_likes=Sum('podcast__reaction__reaction')
         ).filter(podcast_count__gt=0).order_by('-podcast_count', '-total_likes')
-        print(top_podcasters)
         return top_podcasters
     
+class SearchPodcasts(ListAPIView):
+    serializer_class = PodcastSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Podcast.objects.all()
+        query = self.request.query_params.get('q', None)
+        
+        if query:
+            queryset = queryset.filter(
+                Q(title__icontains=query) |
+                Q(description__startswith=query) |
+                Q(author__icontains=query)
+            )
+        
+        return queryset
+    
+class UserPodcastsView(ListAPIView):
+    serializer_class = PodcastSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        if not User.objects.filter(id=user_id).exists():
+            raise NotFound('User not found.')
+        return Podcast.objects.filter(user_id=user_id)
+
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        top_podcasters = queryset.values('id', 'first_name' , 'last_name', 'podcast_count', 'total_likes')[:10]
-        return Response(top_podcasters)
+        user_id = self.kwargs.get('user_id')
+        user = User.objects.get(id=user_id)
+
+        user_serializer = UserSerializer(user, context={'request': request})
+        podcast_serializer = PodcastSerializer(queryset, context={'request': request}, many=True)
+
+        return Response({
+            'user': user_serializer.data,
+            'podcasts': podcast_serializer.data
+        })

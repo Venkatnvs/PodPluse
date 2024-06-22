@@ -10,9 +10,12 @@ from .helper import extract_first_last_name
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ('id', 'email', 'first_name', 'last_name', 'is_active', 'is_staff', 'is_superuser', 'is_completed', 'is_socialaccount', 'date_joined', 'last_login')
+        fields = ('id', 'email', 'full_name', 'first_name', 'last_name', 'is_active', 'is_staff', 'is_superuser', 'is_completed', 'is_socialaccount', 'date_joined', 'last_login')
+
+    get_full_name = lambda self, obj: obj.get_full_name()
 
 class RegisterSerializer(serializers.ModelSerializer):
     username = serializers.CharField()

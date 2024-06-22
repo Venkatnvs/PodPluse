@@ -2,16 +2,16 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import PlayIcon from '../../assets/icons/Play.svg';
-import ThreeDotsIcon from '../../assets/icons/three-dots.svg';
-import DeleteIcon from '../../assets/icons/delete.svg';
-import UserIcon from '../../assets/icons/avatar.svg';
 import { deletePodcastApi } from '@/apis/PodCast';
+import { useDispatch } from 'react-redux';
+import { setAudioAction } from '@/store/actions/audioActions';
+import { DeleteIcon, PlayIcon, ThreeDotsIcon, UserIcon } from '@/constants/Icons';
 
 const PodcastDetailPlayer = ({
   isOwner,
   podcast,
 }) => {
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -31,6 +31,18 @@ const PodcastDetailPlayer = ({
       toast({
         title: "Error",
         description: "Something went wrong",
+        variant: "destructive",
+      });
+    }
+  }
+
+  const handlePlay = () => {
+    if (podcast?.audio) {
+      dispatch(setAudioAction(podcast));
+    } else {
+      toast({
+        title: "Error",
+        description: "No audio found",
         variant: "destructive",
       });
     }
@@ -69,7 +81,7 @@ const PodcastDetailPlayer = ({
           </article>
 
           <Button
-            // onClick={handlePlay}
+            onClick={handlePlay}
             className="text-16 w-full max-w-[250px] bg-orange-1 font-extrabold text-white-1"
           >
             <img

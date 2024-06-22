@@ -1,8 +1,9 @@
 import LeftSideBar from '@/components/LeftSideBar';
-import Logo from './../../assets/icons/logo.svg';
 import RightSideBar from '@/components/RightSideBar';
 import MobileNav from '@/components/MobileNav';
 import { Toaster } from '@/components/ui/toaster';
+import MainPodCastPlayer from '@/components/PodCastPlayer/MainPodCastPlayer';
+import { Logo } from '@/constants/Icons';
 
 const Layout = (
   { children }
@@ -33,6 +34,7 @@ const Layout = (
 
         <RightSideBar />
       </main>
+      <MainPodCastPlayer />
     </div>
   )
 }

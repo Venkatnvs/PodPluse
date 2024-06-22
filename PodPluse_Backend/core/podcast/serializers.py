@@ -1,8 +1,13 @@
 from rest_framework import serializers
 from core.models import Podcast, Audio, Image, Reaction, PodcastView
+from django.contrib.auth import get_user_model
+from account.serializers import UserSerializer
+
+User = get_user_model()
 
 class PodcastSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
     class Meta:
         model = Podcast
         fields = '__all__'
@@ -12,6 +17,12 @@ class PodcastSerializer(serializers.ModelSerializer):
         if isinstance(image, Image):
             return ImageSerializer(image, context=self.context).data
         return image
+    
+    def get_user(self, obj):
+        user = obj.user
+        if isinstance(user, User):
+            return UserSerializer(user, context=self.context).data
+        return user
 
 class AudioSerializer(serializers.ModelSerializer):
     class Meta:
@@ -60,3 +71,12 @@ class FullPodcastSerializer(serializers.ModelSerializer):
     class Meta:
         model = Podcast
         fields = '__all__'
+
+class TopPodcasterSerializer(serializers.ModelSerializer):
+    podcasts = PodcastSerializer(many=True, read_only=True, source='podcast_set')
+    podcast_count = serializers.IntegerField(read_only=True)
+    total_likes = serializers.IntegerField(read_only=True)
+    
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'podcast_count', 'total_likes', 'podcasts']

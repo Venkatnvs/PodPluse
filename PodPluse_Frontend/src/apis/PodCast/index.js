@@ -26,3 +26,6 @@ export const deletePodcastApi = (podcastUUID) =>
 
 export const getTopPodCastersApi = () =>
     AXIOS_INSTANCE.get('/core/podcast/top-podcasters/');
+
+export const searchPodcastsApi = (search) =>
+    AXIOS_INSTANCE.get(`/core/podcast/search/?q=${search}`);

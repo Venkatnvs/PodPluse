@@ -1,6 +1,4 @@
-import Home from "../assets/icons/home.svg";
-import Discover from "../assets/icons/discover.svg";
-import Microphone from "../assets/icons/microphone.svg";
+import { Discover, Home, Microphone, Profile } from "@/constants/Icons";
 
 export const sidebarLinks = [
   {
@@ -18,4 +16,9 @@ export const sidebarLinks = [
     href: "/create-podcast",
     title: "Create Podcast",
   },
+  {
+    imgURL: Profile,
+    href: "/profile",
+    title: "My Profile",
+  }
 ];

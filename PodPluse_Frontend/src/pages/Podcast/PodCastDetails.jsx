@@ -2,12 +2,12 @@ import { getPodcastApi, getSimilarPodcastsApi } from '@/apis/PodCast'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Layout from "../Layouts/Layout";
-import headphoneIcon from '../../assets/icons/headphone.svg'
 import PodCastCard from '@/components/PodCastCard';
 import LoaderSpinner from '@/components/LoaderSpinner';
 import EmptyListState from '@/components/EmptyListState';
 import PodcastDetailPlayer from './PodcastDetailPlayer';
 import { useSelector } from 'react-redux';
+import { HeadphoneIcon } from '@/constants/Icons';
 
 const PodCastDetails = () => {
     const { id } = useParams()
@@ -45,7 +45,7 @@ const PodCastDetails = () => {
             </h1>
             <figure className="flex gap-3">
             <img
-                src={headphoneIcon}
+                src={HeadphoneIcon}
                 width={24}
                 height={24}
                 alt="headphone"

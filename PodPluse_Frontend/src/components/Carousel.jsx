@@ -27,27 +27,29 @@ const Carousel = ({ topPodCastDetail }) => {
         onNavButtonClick
     )
 
-    const slides = topPodCastDetail && topPodCastDetail?.filter((item) => item.totalPodcasts > 0)
+    const slides = topPodCastDetail && topPodCastDetail?.filter((item) => item.podcast_count > 0)
 
     if(!slides) return <LoaderSpinner />
 
     return (
         <section className="flex w-full flex-col gap-4 overflow-hidden" ref={emblaRef}>
         <div className="flex">
-            {slides.slice(0, 5).map((item) => (
+            {slides.slice(0, 5).map((item, index) => (
             <figure
-                key={item._id}
+                key={index}
                 className="carousel_box"
-                onClick={() => navigate.push(`/podcasts/${item.podcast[0]?.podcastId}`)}
+                onClick={() => 
+                    navigate(`/podcast/${item?.podcasts[0]?.uuid}`)
+                }
             >
                 <img 
-                    src={item.imageUrl}
+                    src={item.podcasts[0]?.image.full_image_url}
                     alt="card"
                     className="absolute size-full rounded-xl border-none object-cover"
                 />
                 <div className="glassmorphism-black relative z-10 flex flex-col rounded-b-xl p-4">
-                <h2 className="text-14 font-semibold text-white-1">{item.podcast[0]?.podcastTitle}</h2>
-                <p className="text-12 font-normal text-white-2">{item.name}</p>
+                    <h2 className="text-14 font-semibold text-white-1">{item.podcasts[0]?.title}</h2>
+                    <p className="text-12 font-normal text-white-2">{item.podcasts[0]?.author}</p>
                 </div>
             </figure>
             ))}

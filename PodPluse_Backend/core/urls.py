@@ -6,7 +6,9 @@ from core.podcast.views import (
     GetSpecificPodCast, 
     GetSimilarPodCast,
     DeletePodcast,
-    GetTopPodCasters
+    GetTopPodCasters,
+    SearchPodcasts,
+    UserPodcastsView,
 )
 from core.podcast.utils import process_image_view
 
@@ -23,4 +25,6 @@ urlpatterns = [
     path('podcast/<uuid:uuid>/delete/', DeletePodcast.as_view(), name='core-delete_podcast'),
 
     path('podcast/top-podcasters/', GetTopPodCasters.as_view(), name='core-get_top_podcasters'),
+    path('podcast/search/', SearchPodcasts.as_view(), name='core-search_podcasts'),
+    path('podcast/<int:user_id>/podcasts/', UserPodcastsView.as_view(), name='core-user_podcasts'),
 ]
