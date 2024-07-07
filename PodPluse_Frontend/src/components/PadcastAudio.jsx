@@ -9,6 +9,7 @@ import { generatePodcastApi } from "@/apis/PodCast";
 const useGereratePodcast = ({
   setAudio,
   voiceType,
+  language,
   audio,
   setAudioBlob,
   voicePrompt,
@@ -31,10 +32,31 @@ const useGereratePodcast = ({
       return;
     }
 
+    if (!voiceType) {
+      setIsGenerating(false);
+      toast({
+        title: "Error",
+        description: "Please select a voice type",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!language) {
+      setIsGenerating(false);
+      toast({
+        title: "Error",
+        description: "Please select a language",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const res = await generatePodcastApi({
-        voiceType,
-        voicePrompt,
+        voicePrompt: voicePrompt,
+        voiceType: voiceType,
+        language: language,
       });
       const audioBlob = new Blob([res.data], { type: 'audio/mpeg' });
       const audioUrl = URL.createObjectURL(audioBlob);
@@ -61,6 +83,7 @@ const useGereratePodcast = ({
 const PadcastAudio = ({
   setAudio,
   voiceType,
+  language,
   audio,
   setAudioBlob,
   voicePrompt,
@@ -73,6 +96,7 @@ const PadcastAudio = ({
   const { isGenerating, generatePodcast } = useGereratePodcast({
     setAudio,
     voiceType,
+    language,
     audio,
     setAudioBlob,
     voicePrompt,

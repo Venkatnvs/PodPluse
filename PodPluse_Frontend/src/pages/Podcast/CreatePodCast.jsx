@@ -3,20 +3,21 @@ import Layout from "../Layouts/Layout";
 import { z } from "zod"
 import { Label } from "@radix-ui/react-label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { voiceCategories } from "./data";
+import { customVoice, voiceCategories } from "./data";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { set, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PadcastAudio from "@/components/PadcastAudio";
 import PodcastImage from "@/components/PodcastImage";
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { createPodcastApi } from "@/apis/PodCast";
+import { createPodcastApi, getPodcastAvailableLanguagesApi } from "@/apis/PodCast";
 import { useNavigate } from "react-router-dom";
+import { ReactMediaRecorder } from "react-media-recorder";
 
 const formSchema = z.object({
   podcastTitle: z.string().min(2),
@@ -34,6 +35,23 @@ const CreatePodCast = () => {
   const [imageUrl, setImageUrl] = useState(null)
   const [imageBlob, setImageBlob] = useState(null)
   const [imagePrompt, setImagePrompt] = useState(null)
+  const [customAudio, setCustomAudio] = useState(null)
+  const [isRecording, setIsRecording] = useState(false);
+
+  const [language, setLanguage] = useState(null)
+  const [avaliabeLanguages, setAvailableLanguages] = useState([])
+
+  useEffect(() => {
+    async function fetchLanguages() {
+      try {
+        const response = await getPodcastAvailableLanguagesApi()
+        setAvailableLanguages(response.data)
+      } catch (error) {
+        console.error('Error fetching languages:', error)
+      }
+    }
+    fetchLanguages()
+  }, [])
 
   const { toast } = useToast()
 
@@ -58,6 +76,7 @@ const CreatePodCast = () => {
       formData.append('voicePrompt', voicePrompt)
       formData.append('imagePrompt', imagePrompt)
       formData.append('imageUrl', imageUrl)
+      formData.append('language', language)
 
       createPodcastApi(formData)
       setIsLoading(false)
@@ -92,7 +111,7 @@ const CreatePodCast = () => {
                   <FormControl>
                     <Input className="input-class focus-visible:ring-offset-orange-1" placeholder="JSM Pro Podcast" {...field} />
                   </FormControl>
-                  <FormMessage className="text-white-1" />
+                  <FormMessage className="text-orange-1" />
                 </FormItem>
               )}
             />
@@ -113,13 +132,64 @@ const CreatePodCast = () => {
                     </SelectItem>
                   ))}
                 </SelectContent>
-                {voiceType && (
+
+                {voiceType === customVoice && (
+                  <div className="flex flex-col gap-2.5 pt-6 pb-5">
+                  <Label className="text-16 font-bold text-white-1">Record Your Voice (5-10 seconds)</Label>
+                  <ReactMediaRecorder
+                    onStop={(blobUrl, blob) => {
+                      setCustomAudio(blobUrl);
+                      setIsRecording(false);
+                    }}
+                    render={({ startRecording, stopRecording }) => (
+                      <div className="flex flex-col gap-2">
+                        <Button
+                          className="text-16 w-full bg-orange-1 font-bold text-white-1 transition-all duration-500 hover:bg-orange-800 rounded"
+                          onClick={() => {
+                            if (isRecording) {
+                              stopRecording();
+                              setIsRecording(false);
+                            } else {
+                              startRecording();
+                              setIsRecording(true);
+                            }
+                          }}
+                        >
+                          {isRecording ? 'Stop Recording' : 'Record from Microphone'}
+                        </Button>
+                        {customAudio && <audio src={customAudio} controls className="mt-2 w-full" />}
+                      </div>
+                    )}
+                  />
+                </div>
+                )}
+
+                {(voiceType && voiceType !== customVoice) && (
                   <audio 
                     src={`/${voiceType}.mp3`}
                     autoPlay
                     className="hidden"
                   />
                 )}
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-2.5">
+              <Label className="text-16 font-bold text-white-1">
+                Select Language
+              </Label>
+
+              <Select onValueChange={(value) => setLanguage(value)}>
+                <SelectTrigger className={cn('text-16 w-full border-none bg-black-1 text-gray-1 focus-visible:ring-offset-orange-1')}>
+                  <SelectValue placeholder="Select Language" className="placeholder:text-gray-1 " />
+                </SelectTrigger>
+                <SelectContent className="text-16 border-none bg-black-1 font-bold text-white-1 focus:ring-orange-1">
+                  {avaliabeLanguages.map((language) => (
+                    <SelectItem key={language} value={language} className="capitalize focus:bg-orange-1">
+                      {language}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
 
@@ -132,7 +202,7 @@ const CreatePodCast = () => {
                   <FormControl>
                     <Textarea className="input-class focus-visible:ring-offset-orange-1" placeholder="Write a short podcast description" {...field} />
                   </FormControl>
-                  <FormMessage className="text-white-1" />
+                  <FormMessage className="text-orange-1" />
                 </FormItem>
               )}
             />
@@ -141,7 +211,8 @@ const CreatePodCast = () => {
               <PadcastAudio
                 setAudio={setAudioUrl}
                 setAudioBlob={setAudioBlob}
-                voiceType={voiceType && voiceType}
+                voiceType={voiceType || ""}
+                language={language || ""}
                 audio={audioUrl}
                 voicePrompt={voicePrompt}
                 setVoicePrompt={setVoicePrompt}

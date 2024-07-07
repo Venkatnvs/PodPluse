@@ -34,7 +34,9 @@ const Layout = (
 
         <RightSideBar />
       </main>
-      <MainPodCastPlayer />
+      {
+        window.location.pathname !== '/create-podcast' && <MainPodCastPlayer />
+      }
     </div>
   )
 }

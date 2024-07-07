@@ -13,12 +13,12 @@ const LeftSideBar = () => {
 
   return (
     <section className={cn("left_sidebar h-[calc(100vh-5px)]", {
-      'h-[calc(100vh-140px)]': audio?.audio
+      'h-[calc(100vh-120px)]': audio?.audio
     })}>
       <nav className="flex flex-col gap-6">
-        <Link to="/" className="flex cursor-pointer items-center gap-1 pb-10 max-lg:justify-center">
-          <img src={Logo} alt="logo" width={23} height={27} />
-          <h1 className="text-24 font-extrabold text-white max-lg:hidden">PodPluse</h1>
+        <Link to="/" className="flex cursor-pointer text-center items-center gap-1 pb-10 max-lg:justify-center">
+          <img className="mr-2" src={Logo} alt="logo" width={23} height={27} />
+          <h1 className="text-24 font-extrabold text-center text-white max-lg:hidden">PodPluse</h1>
         </Link>
 
         {

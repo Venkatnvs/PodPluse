@@ -32,7 +32,7 @@ const RightSideBar = () => {
 
   return (
     <section className={cn("right_sidebar h-[calc(100vh-5px)]", {
-      'h-[calc(100vh-140px)]': audio?.audio
+      'h-[calc(100vh-120px)]': audio?.audio
     })}>
         {
           user && (

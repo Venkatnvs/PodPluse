@@ -1,5 +1,5 @@
 import { SET_AUDIO_COOKIE } from '@/constants/CookiesConstants';
-import { SET_AUDIO, AUDIO_FAIL } from '@/constants/actions/AudioConstants';
+import { SET_AUDIO, AUDIO_FAIL, SET_AUDIO_TIME, CLEAR_AUDIO, SET_AUDIO_IS_PAUSED, SET_AUDIO_IS_MUTED } from '@/constants/actions/AudioConstants';
 import Cookies from 'js-cookie';
 
 const getStoredAudio = () => {
@@ -9,6 +9,9 @@ const getStoredAudio = () => {
 
 const initialState = {
     audio: getStoredAudio(),
+    currentTime: 0,
+    isPaused: true,
+    isMuted: false,
     error: null,
 };
 
@@ -20,10 +23,34 @@ const audioReducer = (state = initialState, action) => {
                 audio: action.payload,
                 error: null,
             };
+        case SET_AUDIO_TIME:
+            return {
+                ...state,
+                currentTime: action.payload,
+            };
+        case SET_AUDIO_IS_PAUSED:
+            return {
+                ...state,
+                isPaused: action.payload,
+            };
+        case SET_AUDIO_IS_MUTED:
+            return {
+                ...state,
+                isMuted: action.payload,
+            };
         case AUDIO_FAIL:
             return {
                 ...state,
                 error: action.payload,
+                audio: null,
+            };
+        case CLEAR_AUDIO:
+            return {
+                ...state,
+                audio: null,
+                currentTime: 0,
+                isPaused: true,
+                isMuted: false,
             };
         default:
             return state;

@@ -11,10 +11,11 @@ from core.podcast.views import (
     UserPodcastsView,
 )
 from core.podcast.utils import process_image_view
+from core.create_podcast_audio import CreatePodcastAudioTTS, GetAvailableLanguages
 
 urlpatterns = [
     path('podcast/generate/', PodCastGenerator, name='core-podcast-generate'),
-    path('podcast/generate2/', PodCastGenerator2, name='core-podcast-generate2'),
+    path('podcast/generate2/', CreatePodcastAudioTTS.as_view(), name='core-podcast-generate2'),
     path('image/generate/', ImageGenerator, name='core-image-generate'),
     path('podcast/create/', PodCastCreate, name='core-podcast-create'),
     path('podcast/trending/', TrendingPodCastList.as_view(), name='core-podcast-trending'),
@@ -27,4 +28,6 @@ urlpatterns = [
     path('podcast/top-podcasters/', GetTopPodCasters.as_view(), name='core-get_top_podcasters'),
     path('podcast/search/', SearchPodcasts.as_view(), name='core-search_podcasts'),
     path('podcast/<int:user_id>/podcasts/', UserPodcastsView.as_view(), name='core-user_podcasts'),
+
+    path('podcast/available-languages/', GetAvailableLanguages, name='core-get_available_languages'),
 ]

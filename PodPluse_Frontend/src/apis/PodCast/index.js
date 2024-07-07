@@ -29,3 +29,6 @@ export const getTopPodCastersApi = () =>
 
 export const searchPodcastsApi = (search) =>
     AXIOS_INSTANCE.get(`/core/podcast/search/?q=${search}`);
+
+export const getPodcastAvailableLanguagesApi = () =>
+    AXIOS_INSTANCE.get('/core/podcast/available-languages/');
