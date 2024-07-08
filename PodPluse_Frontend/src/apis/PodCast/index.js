@@ -5,6 +5,14 @@ export const generatePodcastApi = (formData) =>
         responseType: 'arraybuffer',
     });
 
+export const generateCustomPodcastApi = (formData) =>
+    AXIOS_INSTANCE.post('/core/podcast/generate2/', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+        responseType: 'arraybuffer',
+    });
+
 export const createPodcastApi = (formData) =>
     AXIOS_INSTANCE.post('/core/podcast/create/', formData,{
         headers: {

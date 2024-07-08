@@ -4,7 +4,8 @@ import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { Loader } from "lucide-react";
 import { useToast } from "./ui/use-toast";
-import { generatePodcastApi } from "@/apis/PodCast";
+import { generateCustomPodcastApi, generatePodcastApi } from "@/apis/PodCast";
+import { customVoice } from "@/pages/Podcast/data";
 
 const useGereratePodcast = ({
   setAudio,
@@ -15,6 +16,7 @@ const useGereratePodcast = ({
   voicePrompt,
   setVoicePrompt,
   setAudioDuration,
+  customAudioBlob,
   toast,
 }) => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -42,6 +44,16 @@ const useGereratePodcast = ({
       return;
     }
 
+    if(voiceType === customVoice && !customAudioBlob){
+      setIsGenerating(false);
+      toast({
+        title: "Error",
+        description: "Please record a custom audio file",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!language) {
       setIsGenerating(false);
       toast({
@@ -53,11 +65,15 @@ const useGereratePodcast = ({
     }
 
     try {
-      const res = await generatePodcastApi({
+      let apiData = {
         voicePrompt: voicePrompt,
         voiceType: voiceType,
         language: language,
-      });
+      }
+      if(voiceType === customVoice){
+        apiData.customAudio = customAudioBlob;
+      }
+      const res = await generateCustomPodcastApi(apiData);
       const audioBlob = new Blob([res.data], { type: 'audio/mpeg' });
       const audioUrl = URL.createObjectURL(audioBlob);
       toast({
@@ -89,6 +105,7 @@ const PadcastAudio = ({
   voicePrompt,
   setVoicePrompt,
   setAudioDuration,
+  customAudioBlob,
 }) => {
 
   const { toast } = useToast()
@@ -102,6 +119,7 @@ const PadcastAudio = ({
     voicePrompt,
     setVoicePrompt,
     setAudioDuration,
+    customAudioBlob,
     toast,
   });
 

@@ -18,6 +18,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { createPodcastApi, getPodcastAvailableLanguagesApi } from "@/apis/PodCast";
 import { useNavigate } from "react-router-dom";
 import { ReactMediaRecorder } from "react-media-recorder";
+import { FaMicrophone, FaStop, FaRedo } from 'react-icons/fa';
 
 const formSchema = z.object({
   podcastTitle: z.string().min(2),
@@ -35,11 +36,15 @@ const CreatePodCast = () => {
   const [imageUrl, setImageUrl] = useState(null)
   const [imageBlob, setImageBlob] = useState(null)
   const [imagePrompt, setImagePrompt] = useState(null)
+
   const [customAudio, setCustomAudio] = useState(null)
+  const [customAudioBlob, setCustomAudioBlob] = useState(null)
   const [isRecording, setIsRecording] = useState(false);
 
   const [language, setLanguage] = useState(null)
   const [avaliabeLanguages, setAvailableLanguages] = useState([])
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [intervalId, setIntervalId] = useState(null);
 
   useEffect(() => {
     async function fetchLanguages() {
@@ -63,6 +68,18 @@ const CreatePodCast = () => {
     },
   })
 
+  useEffect(() => {
+    if (isRecording) {
+      const id = setInterval(() => {
+        setRecordingTime(prevTime => prevTime + 1);
+      }, 1000);
+      setIntervalId(id);
+    } else {
+      clearInterval(intervalId);
+      setRecordingTime(0);
+    }
+  }, [isRecording]);
+
   function onSubmit(data) {
     setIsLoading(true)
     try {
@@ -78,13 +95,22 @@ const CreatePodCast = () => {
       formData.append('imageUrl', imageUrl)
       formData.append('language', language)
 
-      createPodcastApi(formData)
-      setIsLoading(false)
-      toast({
-        title: 'Success',
-        description: 'Podcast created successfully'
+      createPodcastApi(formData).then(() => {
+        setIsLoading(false)
+        toast({
+          title: 'Success',
+          description: 'Podcast created successfully'
+        })
+        navigate('/')
+      }).catch((error) => {
+        console.error('Error creating podcast:', error)
+        setIsLoading(false)
+        toast({
+          title: 'Error',
+          description: 'Error creating podcast',
+          variant: 'destructive'
+        })
       })
-      navigate('/')
     } catch (error) {
       console.error('Error creating podcast:', error)
       setIsLoading(false)
@@ -117,12 +143,12 @@ const CreatePodCast = () => {
             />
 
             <div className="flex flex-col gap-2.5">
-              <Label className="text-16 font-bold text-white-1">
+              <Label className="text-14 font-bold text-white-1">
                 Select AI Voice
               </Label>
 
               <Select onValueChange={(value) => setVoiceType(value)}>
-                <SelectTrigger className={cn('text-16 w-full border-none bg-black-1 text-gray-1 focus-visible:ring-offset-orange-1')}>
+                <SelectTrigger className={cn('text-14 w-full border-none bg-black-1 text-gray-1 focus-visible:ring-offset-orange-1')}>
                   <SelectValue placeholder="Select AI Voice" className="placeholder:text-gray-1 " />
                 </SelectTrigger>
                 <SelectContent className="text-16 border-none bg-black-1 font-bold text-white-1 focus:ring-orange-1">
@@ -134,36 +160,49 @@ const CreatePodCast = () => {
                 </SelectContent>
 
                 {voiceType === customVoice && (
-                  <div className="flex flex-col gap-2.5 pt-6 pb-5">
-                  <Label className="text-16 font-bold text-white-1">Record Your Voice (5-10 seconds)</Label>
-                  <ReactMediaRecorder
-                    onStop={(blobUrl, blob) => {
-                      setCustomAudio(blobUrl);
-                      setIsRecording(false);
-                    }}
-                    render={({ startRecording, stopRecording }) => (
-                      <div className="flex flex-col gap-2">
-                        <Button
-                          className="text-16 w-full bg-orange-1 font-bold text-white-1 transition-all duration-500 hover:bg-orange-800 rounded"
-                          onClick={() => {
-                            if (isRecording) {
-                              stopRecording();
-                              setIsRecording(false);
-                            } else {
-                              startRecording();
-                              setIsRecording(true);
-                            }
-                          }}
-                        >
-                          {isRecording ? 'Stop Recording' : 'Record from Microphone'}
-                        </Button>
-                        {customAudio && <audio src={customAudio} controls className="mt-2 w-full" />}
-                      </div>
-                    )}
-                  />
-                </div>
+                  <div className="flex flex-col gap-2.5 mt-3">
+                    <Label 
+                      className="text-14 font-bold text-white-1"
+                    >
+                      Record Your Voice (5-10 seconds)
+                    </Label>
+                    <ReactMediaRecorder
+                      audio
+                      onStop={(blobUrl, blob) => {
+                        setCustomAudio(blobUrl);
+                        setCustomAudioBlob(blob);
+                        setIsRecording(false);
+                      }}
+                      render={({ startRecording, stopRecording }) => (
+                        <div className="flex flex-col items-center gap-2">
+                          <Button
+                            className="text-14 w-full bg-orange-500 font-bold text-white transition-all duration-500 hover:bg-orange-600 rounded"
+                            onClick={() => {
+                              if (isRecording) {
+                                stopRecording();
+                                setIsRecording(false);
+                              } else {
+                                startRecording();
+                                setIsRecording(true);
+                              }
+                            }}
+                          >
+                            {isRecording ? <FaStop /> : <FaMicrophone />}&nbsp;
+                            {isRecording ? 'Stop Recording' : 'Record from Microphone'}
+                          </Button>
+                          {isRecording && (
+                            <div className="text-white-1 mt-2">
+                              Recording... {recordingTime}s
+                            </div>
+                          )}
+                          {customAudio && (
+                            <audio src={customAudio} controls className="mt-2 w-full rounded-md shadow-lg" />
+                          )}
+                        </div>
+                      )}
+                    />
+                  </div>
                 )}
-
                 {(voiceType && voiceType !== customVoice) && (
                   <audio 
                     src={`/${voiceType}.mp3`}
@@ -175,7 +214,7 @@ const CreatePodCast = () => {
             </div>
 
             <div className="flex flex-col gap-2.5">
-              <Label className="text-16 font-bold text-white-1">
+              <Label className="text-14 font-bold text-white-1">
                 Select Language
               </Label>
 
@@ -217,6 +256,7 @@ const CreatePodCast = () => {
                 voicePrompt={voicePrompt}
                 setVoicePrompt={setVoicePrompt}
                 setAudioDuration={setAudioDuration}
+                customAudioBlob={customAudioBlob}
               />
 
               <PodcastImage 
