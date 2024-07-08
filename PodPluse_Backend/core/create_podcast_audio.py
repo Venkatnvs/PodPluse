@@ -50,11 +50,18 @@ class CreatePodcastAudioTTS(APIView):
         return text_splitter.split_text(text)
     
     def combine_audio_chunks(self, sentences, speaker_wav, target_language):
-        combined_audio = AudioSegment.empty()
-        first_chunk_audio = self.process_chunk(sentences[0], speaker_wav, target_language)
-        combined_audio += first_chunk_audio
+        if not sentences:
+            raise ValueError("The sentences list is empty")
 
-        if len(sentences) >= 1 and len(sentences[1]) > 0:
+        combined_audio = AudioSegment.empty()
+
+        # Process the first chunk
+        if len(sentences) > 0:
+            first_chunk_audio = self.process_chunk(sentences[0], speaker_wav, target_language)
+            combined_audio += first_chunk_audio
+
+        # Process the remaining chunks if they exist
+        if len(sentences) > 1:
             with ThreadPoolExecutor() as executor:
                 chunk_audios = list(executor.map(lambda s: self.process_chunk(s, speaker_wav, target_language), sentences[1:]))
                 for chunk_audio in chunk_audios:
@@ -73,11 +80,18 @@ class CreatePodcastAudioTTS(APIView):
             return response
         return None
     
-    def get(self, request):
+    def post(self, request):
         try:
-            voice_text = request.GET.get('voicePrompt')
-            target_language = request.GET.get('language', 'en')
-            speaker_wav = 'Speakers/venkat.wav'  # Update with the actual path to the user's voice sample
+            voice_text = request.POST.get('voicePrompt')
+            voice_type = request.POST.get('voiceType').lower()
+            target_language = request.POST.get('language', 'en')
+
+            if voice_type == "custom":
+                speaker_wav = request.FILES.get('customAudio')
+                if not speaker_wav:
+                    return Response({"error": "Speaker audio file is required"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                speaker_wav = f'Speakers/{voice_type}.wav'  # Update with the actual path to the user's voice sample
 
             if not voice_text:
                 return Response({"error": "Voice text is required"}, status=status.HTTP_400_BAD_REQUEST)

@@ -10,7 +10,7 @@ const getStoredAudio = () => {
 const initialState = {
     audio: getStoredAudio(),
     currentTime: 0,
-    isPaused: true,
+    isPaused: false,
     isMuted: false,
     error: null,
 };
