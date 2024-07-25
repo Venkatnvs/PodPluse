@@ -39,8 +39,8 @@ export const logout = () => {
 export const loginUser = (formData) => async (dispatch) => {
     try {
         const response = await loginApi(formData);
-        Cookies.set(ACCESS_TOKEN, response.data.tokens.access);
-        Cookies.set(REFRESH_TOKEN, response.data.tokens.refresh);
+        Cookies.set(ACCESS_TOKEN, response.data.tokens.access, { expires: 1 });
+        Cookies.set(REFRESH_TOKEN, response.data.tokens.refresh, { expires: 30 });
         dispatch(loginSuccess(response.data.tokens));
         dispatch(fetchUser());
         return response;
@@ -66,8 +66,8 @@ export const refreshToken = () => async (dispatch) => {
     try {
         const refreshToken = Cookies.get(REFRESH_TOKEN);
         const response = await refreshTokenApi(refreshToken);
-        Cookies.set(ACCESS_TOKEN, response.data.access);
-        Cookies.set(REFRESH_TOKEN, response.data.refresh);
+        Cookies.set(ACCESS_TOKEN, response.data.access, { expires: 1 });
+        Cookies.set(REFRESH_TOKEN, response.data.refresh, { expires: 30 });
         dispatch(loginSuccess(response.data));
     } catch (error) {
         dispatch(logout());
@@ -77,7 +77,7 @@ export const refreshToken = () => async (dispatch) => {
 export const fetchUser = () => async (dispatch) => {
     try {
         const response = await fetchUserApi();
-        Cookies.set(SET_USER_DATA, JSON.stringify(response.data));
+        Cookies.set(SET_USER_DATA, JSON.stringify(response.data), { expires: 30 });
         dispatch(setUser(response.data));
     } catch (error) {
         dispatch(setUserFail(error.response.data));

@@ -33,7 +33,7 @@ export const setAudioIsMuted = (isMuted) => ({
 
 export const setAudioAction = (audio) => async (dispatch) => {
     try {
-        Cookies.set(SET_AUDIO_COOKIE, JSON.stringify(audio));
+        Cookies.set(SET_AUDIO_COOKIE, JSON.stringify(audio), { expires: 1 });
         dispatch(setAudio(audio));
     } catch (error) {
         dispatch(audioFail(error));

@@ -65,15 +65,14 @@ const useGereratePodcast = ({
     }
 
     try {
-      let apiData = {
-        voicePrompt: voicePrompt,
-        voiceType: voiceType,
-        language: language,
-      }
+      const apiFormData = new FormData();
+      apiFormData.append('voicePrompt', voicePrompt);
+      apiFormData.append('voiceType', voiceType);
+      apiFormData.append('language', language);
       if(voiceType === customVoice){
-        apiData.customAudio = customAudioBlob;
+        apiFormData.append('customAudio', customAudioBlob, customAudioBlob.name);
       }
-      const res = await generateCustomPodcastApi(apiData);
+      const res = await generateCustomPodcastApi(apiFormData);
       const audioBlob = new Blob([res.data], { type: 'audio/mpeg' });
       const audioUrl = URL.createObjectURL(audioBlob);
       toast({

@@ -36,7 +36,7 @@ const Register = () => {
       toast({
         variant: "destructive",
         description: "Please fill all the fields",
-        title: "Error",
+        title: "Registration Failed",
       })
       setLoading(false)
       return;
@@ -57,7 +57,7 @@ const Register = () => {
         description: (
           <div dangerouslySetInnerHTML={{ __html: formatErrorMessages(res?.response?.data) }} />
         ),
-        title: "Error !",
+        title: "Registration Failed",
         duration: 10000,
       })
     }

@@ -13,7 +13,7 @@ const LeftSideBar = () => {
 
   return (
     <section className={cn("left_sidebar h-[calc(100vh-5px)]", {
-      'h-[calc(100vh-120px)]': audio?.audio
+      'h-[calc(100vh-120px)]': audio?.audio && window.location.pathname !== '/create-podcast'
     })}>
       <nav className="flex flex-col gap-6">
         <Link to="/" className="flex cursor-pointer text-center items-center gap-1 pb-10 max-lg:justify-center">

@@ -35,7 +35,7 @@ const Login = () => {
       toast({
         variant: "destructive",
         description: "Please fill all the fields",
-        title: "Error",
+        title: "Login Failed",
       })
       setLoading(false)
       return
@@ -43,9 +43,10 @@ const Login = () => {
     const res =  await dispatch(loginUser(formData));
     if (res.status === 200 || res.status === 201) {
       setLoading(false)
+      console.log(res)
       toast({
         description: "Logged in successfully",
-        title: "Success :)",
+        title: "Welcome :) back, " + res?.data?.full_name,
       })
       navigate('/')
     }else{
@@ -53,7 +54,7 @@ const Login = () => {
       toast({
         variant: "destructive",
         description: res?.response?.data?.non_field_errors || res?.response?.data?.detail || "Something went wrong",
-        title: "Error",
+        title: "Login Failed",
       })
     }
   }
@@ -107,7 +108,7 @@ const Login = () => {
               }
           </Button>
           <div className='mt-2'>
-            <p className="text-sm mt-2">Don't have an account?&nbsp;
+            <p className="text-sm mt-2">{"Don't have an account"}?&nbsp;
               <Link to="/register" className="text-orange-500 hover:underline">Register</Link>
             </p>
           </div>
