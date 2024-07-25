@@ -66,6 +66,7 @@ class CustomTokenObtainPairSerializer(serializers.Serializer):
                 'is_active': user.is_active,
                 'is_completed': user.is_completed,
                 'is_socialaccount': user.is_socialaccount,
+                'full_name': user.get_full_name(),
                 'tokens': {
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
