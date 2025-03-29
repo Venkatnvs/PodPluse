@@ -13,3 +13,4 @@ transformers
 torch
 coqui-tts
 googletrans==4.0.0-rc1
+drf-yasg

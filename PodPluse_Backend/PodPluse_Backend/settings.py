@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'drf_yasg',
 
     'account',
     'core',
@@ -72,6 +73,10 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Site settings
+SITE_NAME = 'PodPluse'
+SITE_VERSION = 'v1'
 
 # Cache
 CACHES = {
@@ -156,7 +161,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_DIR = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'staticfiles'),
+]
 
 # Media files
 MEDIA_URL = '/media/'
@@ -167,3 +174,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom Auth model
 AUTH_USER_MODEL="account.CustomUser"
+
+# Swagger settings
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Auth Token eg: [Bearer (access_token)]': {
+            "type":"apiKey",
+            "name":"Authorization",
+            "in":"header"
+        }
+    },
+}
